@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream11 Clone - Fantasy Sports Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --dark-color: #1a252f;
+            --light-color: #ecf0f1;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--secondary-color) !important;
+            font-size: 1.8rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: none;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+        
+        .wallet-balance {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .match-card {
+            background: white;
+            border-left: 5px solid var(--secondary-color);
+        }
+        
+        .player-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+        }
+        
+        .player-card.selected {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .dashboard-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .dashboard-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
+        .tab-content {
+            padding: 20px 0;
+        }
+        
+        .kyc-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .kyc-pending {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .kyc-verified {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .transaction-table tr {
+            cursor: pointer;
+        }
+        
+        .modal-content {
+            border-radius: 12px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .contest-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .contest-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        
+        .progress {
+            height: 8px;
+        }
+        
+        .team-player {
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin-bottom: 5px;
+        }
+        
+        .sport-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .cricket-icon {
+            background-color: #e74c3c;
+        }
+        
+        .football-icon {
+            background-color: #3498db;
+        }
+        
+        .basketball-icon {
+            background-color: #f39c12;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+            }
+            
+            .display-4 {
+                font-size: 2.5rem;
+            }
+            
+            .dashboard-card {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-trophy"></i> Dream11 Clone</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('matches')"><i class="fas fa-baseball-ball"></i> Matches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('myTeams')"><i class="fas fa-users"></i> My Teams</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('wallet')"><i class="fas fa-wallet"></i> Wallet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('transactions')"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="me-3 text-light">
+                        <i class="fas fa-coins"></i> <span id="userBalance">₹500</span>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> <span id="userName">John Doe</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showSection('profile')"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showSection('kyc')"><i class="fas fa-id-card"></i> KYC</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showSection('account')"><i class="fas fa-cog"></i> Account Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="admin.html" target="_blank"><i class="fas fa-lock"></i> Admin Panel</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container mt-4" id="mainContainer">
+        <!-- Dashboard Section (Default) -->
+        <section id="dashboard" class="content-section fade-in">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card dashboard-card">
+                        <i class="fas fa-wallet"></i>
+                        <h4>Wallet Balance</h4>
+                        <h3 class="text-success" id="dashboardBalance">₹500</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card dashboard-card">
+                        <i class="fas fa-trophy"></i>
+                        <h4>Contests Joined</h4>
+                        <h3 class="text-warning" id="contestsJoined">12</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card dashboard-card">
+                        <i class="fas fa-rupee-sign"></i>
+                        <h4>Total Winnings</h4>
+                        <h3 class="text-primary" id="totalWinnings">₹2,450</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card dashboard-card">
+                        <i class="fas fa-id-card"></i>
+                        <h4>KYC Status</h4>
+                        <div id="kycStatusDisplay"><span class="kyc-status kyc-verified">Verified</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-chart-line"></i> Performance Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-bell"></i> Notifications</h5>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <div class="alert alert-info">
+                                <small><i class="fas fa-info-circle"></i> IND vs AUS match starts in 2 hours</small>
+                            </div>
+                            <div class="alert alert-success">
+                                <small><i class="fas fa-trophy"></i> You won ₹250 in yesterday's match!</small>
+                            </div>
+                            <div class="alert alert-warning">
+                                <small><i class="fas fa-exclamation-triangle"></i> Complete KYC for withdrawals</small>
+                            </div>
+                            <div class="alert alert-primary">
+                                <small><i class="fas fa-gift"></i> Refer friends and earn ₹100 bonus</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h4 class="mb-3">Recommended Contests</h4>
+                    <div class="row" id="recommendedContests">
+                        <!-- Contest cards will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Matches Section -->
+        <section id="matches" class="content-section d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-baseball-ball"></i> Upcoming Matches</h2>
+                    <div class="row" id="matchesList">
+                        <!-- Matches will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Teams Section -->
+        <section id="myTeams" class="content-section d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-users"></i> My Teams</h2>
+                    <div class="row" id="teamsList">
+                        <!-- Teams will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wallet Section -->
+        <section id="wallet" class="content-section d-none">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0"><i class="fas fa-wallet"></i> Virtual Wallet</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="wallet-balance mb-4">
+                                        <h4>Current Balance</h4>
+                                        <h1 id="walletBalance">₹500</h1>
+                                        <p>Available to use in contests</p>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
+                                            <i class="fas fa-plus-circle"></i> Add Money
+                                        </button>
+                                        <button class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+                                            <i class="fas fa-money-bill-wave"></i> Withdraw
+                                        </button>
+                                        <button class="btn btn-info btn-lg" onclick="showSection('transactions')">
+                                            <i class="fas fa-history"></i> Transaction History
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Quick Stats</h4>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <h6>Total Deposits</h6>
+                                                    <h4 class="text-success">₹1,500</h4>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h6>Total Withdrawals</h6>
+                                                    <h4 class="text-danger">₹1,000</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Payment Methods</h5>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span><i class="fas fa-university"></i> UPI</span>
+                                                <span class="text-success">Available</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span><i class="fas fa-credit-card"></i> Credit/Debit Card</span>
+                                                <span class="text-success">Available</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span><i class="fas fa-bank"></i> Net Banking</span>
+                                                <span class="text-success">Available</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Section -->
+        <section id="transactions" class="content-section d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0"><i class="fas fa-exchange-alt"></i> Transaction History</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="searchTransaction" placeholder="Search transactions...">
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control" id="filterType">
+                                        <option value="">All Types</option>
+                                        <option value="deposit">Deposit</option>
+                                        <option value="withdrawal">Withdrawal</option>
+                                        <option value="contest">Contest</option>
+                                        <option value="winning">Winning</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control" id="filterStatus">
+                                        <option value="">All Status</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="failed">Failed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Transaction ID</th>
+                                            <th>Description</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transactionTable">
+                                        <!-- Transactions will be loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KYC Section -->
+        <section id="kyc" class="content-section d-none">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="mb-0"><i class="fas fa-id-card"></i> KYC Verification</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle"></i> Your KYC is verified. You can withdraw funds up to ₹50,000 per day.
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5><i class="fas fa-user-check text-success"></i> Identity Proof</h5>
+                                                    <p class="text-success">Verified</p>
+                                                    <small>Aadhar Card uploaded</small>
+                                                    <div class="mt-2">
+                                                        <button class="btn btn-sm btn-outline-primary">View Document</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5><i class="fas fa-home text-success"></i> Address Proof</h5>
+                                                    <p class="text-success">Verified</p>
+                                                    <small>Utility Bill uploaded</small>
+                                                    <div class="mt-2">
+                                                        <button class="btn btn-sm btn-outline-primary">View Document</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                                            <h4>KYC Verified</h4>
+                                            <p>Your account is fully verified</p>
+                                            <button class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#kycModal">Update Documents</button>
+                                            <p class="small text-muted mt-3">Verification Date: 15 May 2023</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="content-section d-none">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0"><i class="fas fa-user"></i> My Profile</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="mb-4">
+                                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3498db&color=fff&size=150" 
+                                             class="rounded-circle img-thumbnail" alt="Profile">
+                                        <h4 class="mt-3" id="profileName">John Doe</h4>
+                                        <p class="text-muted">Member since June 2023</p>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6>Account Details</h6>
+                                            <p><i class="fas fa-envelope"></i> john.doe@example.com</p>
+                                            <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                                            <p><i class="fas fa-map-marker-alt"></i> Mumbai, India</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <form id="profileForm">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" value="John Doe" id="profileFullName">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" value="john.doe@example.com" readonly>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Phone Number</label>
+                                                <input type="text" class="form-control" value="9876543210" id="profilePhone">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Date of Birth</label>
+                                                <input type="date" class="form-control" value="1990-01-15" id="profileDOB">
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <label class="form-label">Address</label>
+                                                <textarea class="form-control" rows="3" id="profileAddress">123, Main Street, Mumbai, Maharashtra - 400001</textarea>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">State</label>
+                                                <input type="text" class="form-control" value="Maharashtra" id="profileState">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">PIN Code</label>
+                                                <input type="text" class="form-control" value="400001" id="profilePincode">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="updateProfile()">Update Profile</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="resetProfileForm()">Reset</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Account Settings Section -->
+        <section id="account" class="content-section d-none">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0"><i class="fas fa-cog"></i> Account Settings</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Security Settings</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Change Password</label>
+                                                <input type="password" class="form-control mb-2" id="currentPassword" placeholder="Current Password">
+                                                <input type="password" class="form-control mb-2" id="newPassword" placeholder="New Password">
+                                                <input type="password" class="form-control mb-3" id="confirmPassword" placeholder="Confirm New Password">
+                                                <button class="btn btn-primary" onclick="changePassword()">Change Password</button>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                                                <label class="form-check-label" for="twoFactorAuth">
+                                                    Enable Two-Factor Authentication
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Notification Settings</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                                <label class="form-check-label" for="emailNotifications">
+                                                    Email Notifications
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="smsNotifications" checked>
+                                                <label class="form-check-label" for="smsNotifications">
+                                                    SMS Notifications
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="contestReminders" checked>
+                                                <label class="form-check-label" for="contestReminders">
+                                                    Contest Reminders
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="promotionalEmails">
+                                                <label class="form-check-label" for="promotionalEmails">
+                                                    Promotional Emails
+                                                </label>
+                                            </div>
+                                            <button class="btn btn-primary mt-2" onclick="saveNotificationSettings()">Save Settings</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-danger text-white">
+                                            <h5 class="mb-0">Danger Zone</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+                                            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                                <i class="fas fa-trash"></i> Delete Account
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4><i class="fas fa-trophy"></i> Dream11 Clone</h4>
+                    <p>A fantasy sports platform where you can create teams, join contests and win real money.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light" onclick="showSection('dashboard')">Home</a></li>
+                        <li><a href="#" class="text-light" onclick="showSection('matches')">Matches</a></li>
+                        <li><a href="#" class="text-light" onclick="showSection('wallet')">Wallet</a></li>
+                        <li><a href="#" class="text-light" onclick="showSection('kyc')">KYC</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p><i class="fas fa-envelope"></i> support@dream11clone.com</p>
+                    <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 Dream11 Clone. All rights reserved.</p>
+                <p class="small">This platform is for demonstration purposes only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    
+    <!-- Add Money Modal -->
+    <div class="modal fade" id="addMoneyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Money to Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Amount (₹)</label>
+                        <div class="row g-2 mb-2">
+                            <div class="col-3">
+                                <button class="btn btn-outline-primary w-100 amount-btn" data-amount="100">₹100</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-outline-primary w-100 amount-btn" data-amount="500">₹500</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-outline-primary w-100 amount-btn" data-amount="1000">₹1000</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-outline-primary w-100 amount-btn" data-amount="2000">₹2000</button>
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="addAmount" min="100" max="10000" value="500">
+                        <small class="text-muted">Min: ₹100, Max: ₹10,000</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <div class="list-group">
+                            <label class="list-group-item">
+                                <input class="form-check-input me-1" type="radio" name="paymentMethod" value="upi" checked>
+                                <i class="fas fa-university me-2"></i> UPI
+                            </label>
+                            <label class="list-group-item">
+                                <input class="form-check-input me-1" type="radio" name="paymentMethod" value="card">
+                                <i class="fas fa-credit-card me-2"></i> Credit/Debit Card
+                            </label>
+                            <label class="list-group-item">
+                                <input class="form-check-input me-1" type="radio" name="paymentMethod" value="netbanking">
+                                <i class="fas fa-bank me-2"></i> Net Banking
+                            </label>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Instant credit. No transaction fees.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="addMoney()">Add Money</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal fade" id="withdrawModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Withdraw Money</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Minimum withdrawal amount is ₹100. KYC verification is required for withdrawals.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount (₹)</label>
+                        <input type="number" class="form-control" id="withdrawAmount" min="100" max="5000" value="100">
+                        <small class="text-muted">Available balance: <span id="availableBalance">₹500</span></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bank Account</label>
+                        <select class="form-control" id="bankAccount">
+                            <option value="1">ICICI Bank ****1234</option>
+                            <option value="2">HDFC Bank ****5678</option>
+                        </select>
+                        <a href="#" class="small" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#addAccountModal">Add new account</a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" onclick="withdrawMoney()">Withdraw</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Team Modal -->
+    <div class="modal fade" id="createTeamModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTeamModalTitle">Create Fantasy Team</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Select 11 players (1-4 WK, 3-6 BAT, 1-6 BWL, 1-6 ALL) within 100 credits
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="sport-icon cricket-icon mx-auto">
+                                                        <i class="fas fa-baseball-ball"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5 id="matchTitle">IND vs AUS</h5>
+                                                    <p id="matchDetails">1st T20 • Feroz Shah Kotla, Delhi</p>
+                                                    <p class="mb-0"><small>Starts in <span id="matchTime">2h 30m</span></small></p>
+                                                </div>
+                                                <div class="col-md-3 text-end">
+                                                    <h5 class="text-success">₹50,000</h5>
+                                                    <p class="mb-0">Prize Pool</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <ul class="nav nav-tabs" id="playerRoleTabs">
+                                        <li class="nav-item">
+                                            <button class="nav-link active" data-role="all">All Players</button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" data-role="wk">WK (<span id="wkCountTab">0</span>)</button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" data-role="bat">BAT (<span id="batCountTab">0</span>)</button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" data-role="bwl">BWL (<span id="bwlCountTab">0</span>)</button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" data-role="all">ALL (<span id="allCountTab">0</span>)</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row" id="playerSelection">
+                                <!-- Players will be dynamically loaded -->
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card sticky-top" style="top: 20px;">
+                                <div class="card-header">
+                                    <h6>Team Summary</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p>Selected: <span id="selectedCount">0</span>/11</p>
+                                    <p>Credits Used: <span id="creditsUsed">0</span>/100</p>
+                                    <hr>
+                                    <p>WK: <span id="wkCount">0</span> (1-4)</p>
+                                    <p>BAT: <span id="batCount">0</span> (3-6)</p>
+                                    <p>BWL: <span id="bwlCount">0</span> (1-6)</p>
+                                    <p>ALL: <span id="allCount">0</span> (1-6)</p>
+                                    <hr>
+                                    <div id="selectedPlayersList" class="mb-3" style="max-height: 200px; overflow-y: auto;">
+                                        <!-- Selected players list -->
+                                    </div>
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary" id="saveTeamBtn" disabled onclick="saveTeam()">Save Team</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Contest Modal -->
+    <div class="modal fade" id="joinContestModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Join Contest</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="contestJoinDetails">
+                        <!-- Contest details will be loaded here -->
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Select Team</label>
+                        <select class="form-control" id="selectTeamForContest">
+                            <!-- Teams will be loaded here -->
+                        </select>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle"></i> Entry fee of ₹<span id="contestEntryFee">39</span> will be deducted from your wallet.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="joinContest()">Join Contest</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div class="modal fade" id="addAccountModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Bank Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAccountForm">
+                        <div class="mb-3">
+                            <label class="form-label">Account Holder Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">IFSC Code</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bank Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addBankAccount()">Add Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KYC Modal -->
+    <div class="modal fade" id="kycModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">KYC Verification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5>Identity Proof</h5>
+                                    <p>Upload any one: Aadhar, PAN, Passport, Driver's License</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Document</label>
+                                        <select class="form-control" id="idDocumentType">
+                                            <option value="aadhar">Aadhar Card</option>
+                                            <option value="pan">PAN Card</option>
+                                            <option value="passport">Passport</option>
+                                            <option value="driving_license">Driver's License</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Document Number</label>
+                                        <input type="text" class="form-control" id="idDocumentNumber">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Front</label>
+                                        <input type="file" class="form-control" id="idDocumentFront">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Back</label>
+                                        <input type="file" class="form-control" id="idDocumentBack">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5>Address Proof</h5>
+                                    <p>Upload any one: Aadhar, Utility Bill, Bank Statement</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Document</label>
+                                        <select class="form-control" id="addressDocumentType">
+                                            <option value="aadhar">Aadhar Card</option>
+                                            <option value="utility_bill">Utility Bill</option>
+                                            <option value="bank_statement">Bank Statement</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Document</label>
+                                        <input type="file" class="form-control" id="addressDocument">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitKYC()">Submit for Verification</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Delete Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> This action cannot be undone.
+                    </div>
+                    <p>Are you sure you want to delete your account? All your data, teams, and transaction history will be permanently deleted.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Please type "DELETE" to confirm</label>
+                        <input type="text" class="form-control" id="deleteConfirm" placeholder="Type DELETE here">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Application State
+        const appState = {
+            user: {
+                id: 1,
+                name: "John Doe",
+                email: "john.doe@example.com",
+                balance: 500,
+                contestsJoined: 12,
+                totalWinnings: 2450,
+                kycStatus: "verified"
+            },
+            selectedPlayers: [],
+            currentMatch: null,
+            teams: [],
+            transactions: [],
+            matches: [],
+            contests: []
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+
+        // Initialize the application
+        function initApp() {
+            loadUserData();
+            loadMatches();
+            loadContests();
+            loadTeams();
+            loadTransactions();
+            initCharts();
+            updateUI();
+        }
+
+        // Load user data
+        function loadUserData() {
+            // In a real app, this would come from an API
+            const storedUser = localStorage.getItem('dream11_user');
+            if (storedUser) {
+                appState.user = JSON.parse(storedUser);
+            }
+        }
+
+        // Load matches
+        function loadMatches() {
+            appState.matches = [
+                {
+                    id: 1,
+                    team1: "IND",
+                    team2: "AUS",
+                    sport: "cricket",
+                    venue: "Feroz Shah Kotla, Delhi",
+                    date: "2023-06-20T14:30:00",
+                    status: "upcoming",
+                    prizePool: 50000,
+                    entryFee: 39
+                },
+                {
+                    id: 2,
+                    team1: "MCI",
+                    team2: "MUN",
+                    sport: "football",
+                    venue: "Etihad Stadium",
+                    date: "2023-06-20T17:00:00",
+                    status: "upcoming",
+                    prizePool: 25000,
+                    entryFee: 25
+                },
+                {
+                    id: 3,
+                    team1: "LAL",
+                    team2: "GSW",
+                    sport: "basketball",
+                    venue: "Staples Center",
+                    date: "2023-06-21T20:00:00",
+                    status: "upcoming",
+                    prizePool: 15000,
+                    entryFee: 15
+                }
+            ];
+        }
+
+        // Load contests
+        function loadContests() {
+            appState.contests = [
+                {
+                    id: 1,
+                    matchId: 1,
+                    name: "Mega Contest",
+                    entryFee: 39,
+                    prizePool: 50000,
+                    maxPlayers: 100,
+                    currentPlayers: 78,
+                    status: "open"
+                },
+                {
+                    id: 2,
+                    matchId: 1,
+                    name: "Beginner's Luck",
+                    entryFee: 10,
+                    prizePool: 1000,
+                    maxPlayers: 100,
+                    currentPlayers: 45,
+                    status: "open"
+                }
+            ];
+        }
+
+        // Load teams
+        function loadTeams() {
+            appState.teams = [
+                {
+                    id: 1,
+                    name: "My Champion Team",
+                    matchId: 1,
+                    players: [1, 2, 3, 4, 5],
+                    points: 245,
+                    rank: 12
+                }
+            ];
+        }
+
+        // Load transactions
+        function loadTransactions() {
+            appState.transactions = [
+                {
+                    id: "TXN001",
+                    date: "2023-06-15",
+                    description: "Contest Winnings",
+                    type: "winning",
+                    amount: 250,
+                    status: "completed"
+                },
+                {
+                    id: "TXN002",
+                    date: "2023-06-14",
+                    description: "Contest Entry - IND vs AUS",
+                    type: "contest",
+                    amount: -39,
+                    status: "completed"
+                },
+                {
+                    id: "TXN003",
+                    date: "2023-06-13",
+                    description: "Added via UPI",
+                    type: "deposit",
+                    amount: 500,
+                    status: "completed"
+                },
+                {
+                    id: "TXN004",
+                    date: "2023-06-12",
+                    description: "Withdrawal Request",
+                    type: "withdrawal",
+                    amount: -200,
+                    status: "pending"
+                }
+            ];
+        }
+
+        // Update UI
+        function updateUI() {
+            // Update user info
+            document.getElementById('userName').textContent = appState.user.name;
+            document.getElementById('userBalance').textContent = `₹${appState.user.balance}`;
+            document.getElementById('dashboardBalance').textContent = `₹${appState.user.balance}`;
+            document.getElementById('walletBalance').textContent = `₹${appState.user.balance}`;
+            document.getElementById('availableBalance').textContent = `₹${appState.user.balance}`;
+            document.getElementById('contestsJoined').textContent = appState.user.contestsJoined;
+            document.getElementById('totalWinnings').textContent = `₹${appState.user.totalWinnings}`;
+            
+            // Update KYC status
+            const kycStatusElem = document.getElementById('kycStatusDisplay');
+            if (appState.user.kycStatus === 'verified') {
+                kycStatusElem.innerHTML = '<span class="kyc-status kyc-verified">Verified</span>';
+            } else {
+                kycStatusElem.innerHTML = '<span class="kyc-status kyc-pending">Pending</span>';
+            }
+            
+            // Update profile name
+            document.getElementById('profileName').textContent = appState.user.name;
+            document.getElementById('profileFullName').value = appState.user.name;
+            
+            // Render matches
+            renderMatches();
+            
+            // Render recommended contests
+            renderRecommendedContests();
+            
+            // Render teams
+            renderTeams();
+            
+            // Render transactions
+            renderTransactions();
+        }
+
+        // Show section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('d-none');
+                section.classList.remove('fade-in');
+            });
+            
+            // Show selected section
+            const section = document.getElementById(sectionId);
+            section.classList.remove('d-none');
+            setTimeout(() => {
+                section.classList.add('fade-in');
+            }, 10);
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Render matches
+        function renderMatches() {
+            const container = document.getElementById('matchesList');
+            container.innerHTML = '';
+            
+            appState.matches.forEach(match => {
+                const matchCard = document.createElement('div');
+                matchCard.className = 'col-md-4';
+                matchCard.innerHTML = `
+                    <div class="card match-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge ${getSportBadgeClass(match.sport)}">${match.sport.toUpperCase()}</span>
+                                <small class="text-muted">Starts in 2h 30m</small>
+                            </div>
+                            <h5 class="card-title">${match.team1} vs ${match.team2}</h5>
+                            <p class="card-text">${match.venue}</p>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6>Prize Pool</h6>
+                                    <p class="h5 text-success">₹${match.prizePool.toLocaleString()}</p>
+                                </div>
+                                <div>
+                                    <h6>Entry</h6>
+                                    <p class="h5">₹${match.entryFee}</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100 mt-2" onclick="openCreateTeamModal(${match.id})">Create Team</button>
+                            <button class="btn btn-outline-primary w-100 mt-2" onclick="openJoinContestModal(${match.id})">Join Contest</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(matchCard);
+            });
+        }
+
+        // Render recommended contests
+        function renderRecommendedContests() {
+            const container = document.getElementById('recommendedContests');
+            container.innerHTML = '';
+            
+            appState.contests.forEach(contest => {
+                const match = appState.matches.find(m => m.id === contest.matchId);
+                const progress = (contest.currentPlayers / contest.maxPlayers) * 100;
+                
+                const contestCard = document.createElement('div');
+                contestCard.className = 'col-md-4';
+                contestCard.innerHTML = `
+                    <div class="card contest-card">
+                        <div class="contest-badge">
+                            <span class="badge bg-warning">Recommended</span>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">${contest.name}</h6>
+                            <p class="card-text">${match ? `${match.team1} vs ${match.team2}` : ''}</p>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Prize Pool</span>
+                                <span class="text-success">₹${contest.prizePool.toLocaleString()}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Entry Fee</span>
+                                <span>₹${contest.entryFee}</span>
+                            </div>
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small">
+                                    <span>${contest.currentPlayers}/${contest.maxPlayers} spots</span>
+                                    <span>${progress.toFixed(0)}%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="openJoinContestModal(${contest.matchId}, ${contest.id})">Join Now</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(contestCard);
+            });
+        }
+
+        // Render teams
+        function renderTeams() {
+            const container = document.getElementById('teamsList');
+            container.innerHTML = '';
+            
+            appState.teams.forEach(team => {
+                const match = appState.matches.find(m => m.id === team.matchId);
+                
+                const teamCard = document.createElement('div');
+                teamCard.className = 'col-md-6';
+                teamCard.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">${team.name}</h5>
+                                <span class="badge ${team.rank <= 3 ? 'bg-success' : 'bg-secondary'}">Rank: ${team.rank}</span>
+                            </div>
+                            <p class="card-text">${match ? `${match.team1} vs ${match.team2}` : ''}</p>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <h6>Points</h6>
+                                    <p class="h4 text-primary">${team.points}</p>
+                                </div>
+                                <div>
+                                    <h6>Players</h6>
+                                    <p class="h4">${team.players.length}/11</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary w-100" onclick="viewTeamDetails(${team.id})">View Team</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(teamCard);
+            });
+        }
+
+        // Render transactions
+        function renderTransactions() {
+            const container = document.getElementById('transactionTable');
+            container.innerHTML = '';
+            
+            appState.transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                const amountClass = transaction.amount > 0 ? 'text-success' : 'text-danger';
+                const amountSign = transaction.amount > 0 ? '+' : '';
+                const statusClass = transaction.status === 'completed' ? 'bg-success' : 
+                                 transaction.status === 'pending' ? 'bg-warning' : 'bg-danger';
+                
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td><small>${transaction.id}</small></td>
+                    <td>${transaction.description}</td>
+                    <td><span class="badge ${getTransactionTypeClass(transaction.type)}">${transaction.type}</span></td>
+                    <td class="${amountClass}">${amountSign}₹${Math.abs(transaction.amount)}</td>
+                    <td><span class="badge ${statusClass}">${transaction.status}</span></td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Initialize charts
+        function initCharts() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Winnings (₹)',
+                        data: [500, 800, 1200, 900, 1500, 2450],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Open create team modal
+        function openCreateTeamModal(matchId) {
+            const match = appState.matches.find(m => m.id === matchId);
+            if (!match) return;
+            
+            appState.currentMatch = match;
+            appState.selectedPlayers = [];
+            
+            // Update modal title
+            document.getElementById('createTeamModalTitle').textContent = `Create Fantasy Team - ${match.team1} vs ${match.team2}`;
+            document.getElementById('matchTitle').textContent = `${match.team1} vs ${match.team2}`;
+            document.getElementById('matchDetails').textContent = match.venue;
+            
+            // Load players for this match
+            loadPlayersForMatch(matchId);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('createTeamModal'));
+            modal.show();
+        }
+
+        // Load players for match
+        function loadPlayersForMatch(matchId) {
+            // Sample player data
+            const players = [
+                { id: 1, name: "Virat Kohli", role: "BAT", team: "IND", credits: 10.5 },
+                { id: 2, name: "Rohit Sharma", role: "BAT", team: "IND", credits: 10.0 },
+                { id: 3, name: "Jasprit Bumrah", role: "BWL", team: "IND", credits: 9.5 },
+                { id: 4, name: "David Warner", role: "BAT", team: "AUS", credits: 10.0 },
+                { id: 5, name: "Steve Smith", role: "BAT", team: "AUS", credits: 9.5 },
+                { id: 6, name: "Pat Cummins", role: "BWL", team: "AUS", credits: 9.0 },
+                { id: 7, name: "MS Dhoni", role: "WK", team: "IND", credits: 9.5 },
+                { id: 8, name: "Glenn Maxwell", role: "ALL", team: "AUS", credits: 9.0 },
+                { id: 9, name: "Hardik Pandya", role: "ALL", team: "IND", credits: 9.0 },
+                { id: 10, name: "Mitchell Starc", role: "BWL", team: "AUS", credits: 8.5 },
+                { id: 11, name: "KL Rahul", role: "WK", team: "IND", credits: 9.0 },
+                { id: 12, name: "Josh Hazlewood", role: "BWL", team: "AUS", credits: 8.0 }
+            ];
+            
+            const container = document.getElementById('playerSelection');
+            container.innerHTML = '';
+            
+            players.forEach(player => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'col-6 col-md-4 mb-3';
+                playerDiv.innerHTML = `
+                    <div class="player-card" onclick="togglePlayer(${player.id})" id="player-${player.id}">
+                        <h6>${player.name}</h6>
+                        <small>${player.role} • ${player.team}</small>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary">${player.credits} Cr</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(playerDiv);
+            });
+            
+            // Store players in app state
+            appState.players = players;
+            
+            // Update team summary
+            updateTeamSummary();
+        }
+
+        // Toggle player selection
+        function togglePlayer(playerId) {
+            const player = appState.players.find(p => p.id === playerId);
+            const playerCard = document.getElementById(`player-${playerId}`);
+            const index = appState.selectedPlayers.findIndex(p => p.id === playerId);
+            
+            if (index === -1) {
+                // Check if we can add more players
+                if (appState.selectedPlayers.length >= 11) {
+                    alert('You can only select 11 players');
+                    return;
+                }
+                
+                // Check credit limit
+                const currentCredits = appState.selectedPlayers.reduce((total, p) => total + p.credits, 0);
+                if (currentCredits + player.credits > 100) {
+                    alert('Credit limit exceeded!');
+                    return;
+                }
+                
+                appState.selectedPlayers.push(player);
+                playerCard.classList.add('selected');
+            } else {
+                appState.selectedPlayers.splice(index, 1);
+                playerCard.classList.remove('selected');
+            }
+            
+            updateTeamSummary();
+        }
+
+        // Update team summary
+        function updateTeamSummary() {
+            const wkCount = appState.selectedPlayers.filter(p => p.role === 'WK').length;
+            const batCount = appState.selectedPlayers.filter(p => p.role === 'BAT').length;
+            const bwlCount = appState.selectedPlayers.filter(p => p.role === 'BWL').length;
+            const allCount = appState.selectedPlayers.filter(p => p.role === 'ALL').length;
+            
+            const creditsUsed = appState.selectedPlayers.reduce((total, p) => total + p.credits, 0);
+            
+            // Update counts
+            document.getElementById('selectedCount').textContent = appState.selectedPlayers.length;
+            document.getElementById('creditsUsed').textContent = creditsUsed.toFixed(1);
+            document.getElementById('wkCount').textContent = wkCount;
+            document.getElementById('batCount').textContent = batCount;
+            document.getElementById('bwlCount').textContent = bwlCount;
+            document.getElementById('allCount').textContent = allCount;
+            
+            // Update tab counts
+            document.getElementById('wkCountTab').textContent = wkCount;
+            document.getElementById('batCountTab').textContent = batCount;
+            document.getElementById('bwlCountTab').textContent = bwlCount;
+            document.getElementById('allCountTab').textContent = allCount;
+            
+            // Update selected players list
+            const playersList = document.getElementById('selectedPlayersList');
+            playersList.innerHTML = '';
+            
+            appState.selectedPlayers.forEach(player => {
+                const playerItem = document.createElement('div');
+                playerItem.className = 'team-player';
+                playerItem.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <span>${player.name}</span>
+                        <span class="badge bg-secondary">${player.credits} Cr</span>
+                    </div>
+                    <small class="text-muted">${player.role} • ${player.team}</small>
+                `;
+                playersList.appendChild(playerItem);
+            });
+            
+            // Enable/disable save button based on validation
+            const saveBtn = document.getElementById('saveTeamBtn');
+            if (appState.selectedPlayers.length === 11 && 
+                wkCount >= 1 && wkCount <= 4 &&
+                batCount >= 3 && batCount <= 6 &&
+                bwlCount >= 1 && bwlCount <= 6 &&
+                allCount >= 1 && allCount <= 6) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Team';
+            } else {
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Select 11 Valid Players';
+            }
+        }
+
+        // Save team
+        function saveTeam() {
+            if (appState.selectedPlayers.length !== 11) {
+                alert('Please select exactly 11 players');
+                return;
+            }
+            
+            const teamName = prompt('Enter a name for your team:', `My Team ${appState.teams.length + 1}`);
+            if (!teamName) return;
+            
+            const newTeam = {
+                id: appState.teams.length + 1,
+                name: teamName,
+                matchId: appState.currentMatch.id,
+                players: appState.selectedPlayers.map(p => p.id),
+                points: 0,
+                rank: null
+            };
+            
+            appState.teams.push(newTeam);
+            
+            // Save to localStorage
+            localStorage.setItem('dream11_teams', JSON.stringify(appState.teams));
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createTeamModal'));
+            modal.hide();
+            
+            // Show success message
+            alert('Team created successfully!');
+            
+            // Update UI
+            renderTeams();
+            showSection('myTeams');
+        }
+
+        // Open join contest modal
+        function openJoinContestModal(matchId, contestId) {
+            const match = appState.matches.find(m => m.id === matchId);
+            const contest = contestId ? appState.contests.find(c => c.id === contestId) : appState.contests.find(c => c.matchId === matchId);
+            
+            if (!match || !contest) return;
+            
+            // Update modal content
+            const detailsContainer = document.getElementById('contestJoinDetails');
+            detailsContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5>${contest.name}</h5>
+                        <p>${match.team1} vs ${match.team2}</p>
+                        <div class="row">
+                            <div class="col-6">
+                                <h6>Prize Pool</h6>
+                                <p class="h5 text-success">₹${contest.prizePool.toLocaleString()}</p>
+                            </div>
+                            <div class="col-6">
+                                <h6>Entry Fee</h6>
+                                <p class="h5">₹${contest.entryFee}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contestEntryFee').textContent = contest.entryFee;
+            
+            // Load teams for this match
+            const teamSelect = document.getElementById('selectTeamForContest');
+            teamSelect.innerHTML = '<option value="">Select a team</option>';
+            
+            const teamsForMatch = appState.teams.filter(t => t.matchId === matchId);
+            teamsForMatch.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.id;
+                option.textContent = team.name;
+                teamSelect.appendChild(option);
+            });
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('joinContestModal'));
+            modal.show();
+        }
+
+        // Join contest
+        function joinContest() {
+            const teamSelect = document.getElementById('selectTeamForContest');
+            const teamId = parseInt(teamSelect.value);
+            
+            if (!teamId) {
+                alert('Please select a team');
+                return;
+            }
+            
+            const entryFee = parseInt(document.getElementById('contestEntryFee').textContent);
+            
+            if (appState.user.balance < entryFee) {
+                alert('Insufficient balance. Please add money to your wallet.');
+                return;
+            }
+            
+            // Deduct entry fee
+            appState.user.balance -= entryFee;
+            appState.user.contestsJoined += 1;
+            
+            // Add transaction
+            const newTransaction = {
+                id: `TXN${Date.now()}`,
+                date: new Date().toISOString().split('T')[0],
+                description: `Contest Entry Fee`,
+                type: 'contest',
+                amount: -entryFee,
+                status: 'completed'
+            };
+            
+            appState.transactions.unshift(newTransaction);
+            
+            // Save to localStorage
+            localStorage.setItem('dream11_user', JSON.stringify(appState.user));
+            localStorage.setItem('dream11_transactions', JSON.stringify(appState.transactions));
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('joinContestModal'));
+            modal.hide();
+            
+            // Show success message
+            alert('Successfully joined the contest! Good luck!');
+            
+            // Update UI
+            updateUI();
+            renderTransactions();
+        }
+
+        // Add money
+        function addMoney() {
+            const amount = parseInt(document.getElementById('addAmount').value);
+            if (amount < 100 || amount > 10000) {
+                alert('Please enter an amount between ₹100 and ₹10,000');
+                return;
+            }
+            
+            // Update user balance
+            appState.user.balance += amount;
+            
+            // Add transaction
+            const newTransaction = {
+                id: `TXN${Date.now()}`,
+                date: new Date().toISOString().split('T')[0],
+                description: 'Added via UPI',
+                type: 'deposit',
+                amount: amount,
+                status: 'completed'
+            };
+            
+            appState.transactions.unshift(newTransaction);
+            
+            // Save to localStorage
+            localStorage.setItem('dream11_user', JSON.stringify(appState.user));
+            localStorage.setItem('dream11_transactions', JSON.stringify(appState.transactions));
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addMoneyModal'));
+            modal.hide();
+            
+            // Update UI
+            updateUI();
+            renderTransactions();
+            
+            // Show success message
+            alert(`Successfully added ₹${amount} to your wallet!`);
+        }
+
+        // Withdraw money
+        function withdrawMoney() {
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            if (amount < 100 || amount > 5000) {
+                alert('Withdrawal amount must be between ₹100 and ₹5,000');
+                return;
+            }
+            
+            if (amount > appState.user.balance) {
+                alert('Insufficient balance');
+                return;
+            }
+            
+            if (appState.user.kycStatus !== 'verified') {
+                alert('KYC verification required for withdrawals');
+                return;
+            }
+            
+            // Update user balance
+            appState.user.balance -= amount;
+            
+            // Add transaction
+            const newTransaction = {
+                id: `TXN${Date.now()}`,
+                date: new Date().toISOString().split('T')[0],
+                description: 'Withdrawal to Bank',
+                type: 'withdrawal',
+                amount: -amount,
+                status: 'pending'
+            };
+            
+            appState.transactions.unshift(newTransaction);
+            
+            // Save to localStorage
+            localStorage.setItem('dream11_user', JSON.stringify(appState.user));
+            localStorage.setItem('dream11_transactions', JSON.stringify(appState.transactions));
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('withdrawModal'));
+            modal.hide();
+            
+            // Update UI
+            updateUI();
+            renderTransactions();
+            
+            // Show success message
+            alert(`Withdrawal request of ₹${amount} submitted. It will be processed within 24 hours.`);
+        }
+
+        // Update profile
+        function updateProfile() {
+            const name = document.getElementById('profileFullName').value;
+            const phone = document.getElementById('profilePhone').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            appState.user.name = name;
+            
+            // Save to localStorage
+            localStorage.setItem('dream11_user', JSON.stringify(appState.user));
+            
+            // Update UI
+            updateUI();
+            
+            alert('Profile updated successfully!');
+        }
+
+        // Reset profile form
+        function resetProfileForm() {
+            document.getElementById('profileFullName').value = appState.user.name;
+            document.getElementById('profilePhone').value = '9876543210';
+            document.getElementById('profileDOB').value = '1990-01-15';
+            document.getElementById('profileAddress').value = '123, Main Street, Mumbai, Maharashtra - 400001';
+            document.getElementById('profileState').value = 'Maharashtra';
+            document.getElementById('profilePincode').value = '400001';
+        }
+
+        // Change password
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (!current || !newPass || !confirm) {
+                alert('Please fill in all password fields');
+                return;
+            }
+            
+            if (newPass !== confirm) {
+                alert('New passwords do not match');
+                return;
+            }
+            
+            if (newPass.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+            
+            // Clear fields
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            
+            alert('Password changed successfully!');
+        }
+
+        // Save notification settings
+        function saveNotificationSettings() {
+            alert('Notification settings saved!');
+        }
+
+        // Submit KYC
+        function submitKYC() {
+            const idType = document.getElementById('idDocumentType').value;
+            const idNumber = document.getElementById('idDocumentNumber').value;
+            const addressType = document.getElementById('addressDocumentType').value;
+            
+            if (!idNumber) {
+                alert('Please enter document number');
+                return;
+            }
+            
+            // Update KYC status
+            appState.user.kycStatus = 'pending';
+            
+            // Save to localStorage
+            localStorage.setItem('dream11_user', JSON.stringify(appState.user));
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('kycModal'));
+            modal.hide();
+            
+            // Update UI
+            updateUI();
+            
+            alert('KYC documents submitted for verification. You will be notified once verified.');
+        }
+
+        // Delete account
+        function deleteAccount() {
+            const confirmText = document.getElementById('deleteConfirm').value;
+            
+            if (confirmText !== 'DELETE') {
+                alert('Please type DELETE to confirm');
+                return;
+            }
+            
+            // Clear all data
+            localStorage.clear();
+            
+            // Redirect to home page
+            alert('Account deleted successfully. You will be redirected.');
+            window.location.reload();
+        }
+
+        // Add bank account
+        function addBankAccount() {
+            const form = document.getElementById('addAccountForm');
+            if (!form.checkValidity()) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAccountModal'));
+            modal.hide();
+            
+            alert('Bank account added successfully!');
+        }
+
+        // View team details
+        function viewTeamDetails(teamId) {
+            const team = appState.teams.find(t => t.id === teamId);
+            if (!team) return;
+            
+            const match = appState.matches.find(m => m.id === team.matchId);
+            
+            let message = `Team: ${team.name}\n`;
+            message += `Match: ${match ? `${match.team1} vs ${match.team2}` : 'Unknown'}\n`;
+            message += `Points: ${team.points}\n`;
+            message += `Rank: ${team.rank || 'Not ranked yet'}\n\n`;
+            message += 'Players:\n';
+            
+            // Add player names (in a real app, you'd have player details)
+            message += 'Virat Kohli (BAT)\n';
+            message += 'Rohit Sharma (BAT)\n';
+            message += 'Jasprit Bumrah (BWL)\n';
+            // ... and so on
+            
+            alert(message);
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear session data
+                sessionStorage.clear();
+                alert('Logged out successfully!');
+                // In a real app, you would redirect to login page
+            }
+        }
+
+        // Utility functions
+        function getSportBadgeClass(sport) {
+            switch(sport) {
+                case 'cricket': return 'bg-danger';
+                case 'football': return 'bg-primary';
+                case 'basketball': return 'bg-warning';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getTransactionTypeClass(type) {
+            switch(type) {
+                case 'deposit': return 'bg-success';
+                case 'withdrawal': return 'bg-warning';
+                case 'contest': return 'bg-info';
+                case 'winning': return 'bg-primary';
+                default: return 'bg-secondary';
+            }
+        }
+
+        // Amount button click handler
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('amount-btn')) {
+                const amount = e.target.getAttribute('data-amount');
+                document.getElementById('addAmount').value = amount;
+            }
+        });
+
+        // Player role tabs
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-role]')) {
+                const role = e.target.closest('[data-role]').getAttribute('data-role');
+                // Implement player filtering by role
+                // This would filter the players displayed in the create team modal
+            }
+        });
+    </script>
+</body>
+                                          </html>
